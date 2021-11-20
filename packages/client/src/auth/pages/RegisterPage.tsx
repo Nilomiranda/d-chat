@@ -1,21 +1,48 @@
 import * as React from 'react';
-import Button from '@mui/material/Button';
+import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import { useMutation } from '@apollo/client';
+import { CREATE_USER } from '../mutation/CreateUser';
+import { useToast } from '../../providers/SnackbarProvider';
 
 export const RegisterPage = () => {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const [signUp, { loading: creatingUser }] = useMutation(CREATE_USER)
+  const toast = useToast()
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    // eslint-disable-next-line no-console
-    console.log({
+
+    const payload = {
       email: data.get('email'),
-      password: data.get('password'),
-    });
+      name: data.get('name'),
+      password: data.get('password')
+    }
+
+    console.log(payload);
+
+    try {
+      await signUp({
+        variables: payload
+      })
+
+      toast.show({
+        kind: 'success',
+        message: 'User created!'
+      })
+
+    } catch (err) {
+      console.error(err)
+      toast.show({
+        kind: 'error',
+        message: 'Error creating user. Please try again'
+      })
+    }
   };
 
   return (
@@ -63,14 +90,15 @@ export const RegisterPage = () => {
                 />
               </Grid>
             </Grid>
-            <Button
+            <LoadingButton
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              loading={creatingUser}
             >
               Sign Up
-            </Button>
+            </LoadingButton>
             <Grid container justifyContent="flex-end">
               <Grid item>
                 <Link href="/login" variant="body2">
