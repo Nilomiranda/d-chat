@@ -11,6 +11,7 @@
     "@emotion/react": "^11.6.0",
     "@emotion/styled": "^11.6.0",
     "@mui/icons-material": "^5.1.0",
+    "@mui/lab": "^5.0.0-alpha.55",
     "@mui/material": "^5.1.0",
     "dayjs": "^1.10.7",
     "graphql": "^15.6.1",
