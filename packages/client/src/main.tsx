@@ -7,6 +7,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { ThemeProvider } from '@mui/material/styles';
 import { theme } from './config/theme';
 import { CssBaseline } from '@mui/material';
+import { ToastProvider } from './providers/SnackbarProvider';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -14,7 +15,9 @@ ReactDOM.render(
       <BrowserRouter>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <App />
+          <ToastProvider>
+            <App />
+          </ToastProvider>
         </ThemeProvider>
       </BrowserRouter>
     </ApolloProvider>
