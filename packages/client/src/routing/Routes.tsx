@@ -1,6 +1,7 @@
 import { Route, Switch } from 'react-router-dom'
 import { LoginPage } from '../auth/pages/LoginPage'
 import { RegisterPage } from '../auth/pages/RegisterPage'
+import { HomePage } from '../home/pages/HomePage'
 
 const Routes = () => {
   return (
@@ -14,6 +15,11 @@ const Routes = () => {
       </Route>
       <Route path="/register">
         <RegisterPage />
+      </Route>
+
+      <Route path="/home">
+        {/* TODO: implement authentication guard */}
+        <HomePage />
       </Route>
     </Switch>
   )
