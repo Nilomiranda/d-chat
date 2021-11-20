@@ -7,6 +7,8 @@ import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
 import * as http from "http";
 import {rootSchema} from "./graphql/rootQuery";
 import {decodeTokenAndGetUser} from "./session/authGuard";
+import { execute, subscribe } from 'graphql';
+import { SubscriptionServer } from 'subscriptions-transport-ws';
 
 const prisma = new PrismaClient()
 
@@ -30,8 +32,29 @@ async function startApolloServer() {
       Object.assign(ctx, { user: loggedUser })
       return ctx
     },
-    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+    plugins: [
+      ApolloServerPluginDrainHttpServer({ httpServer }),
+      {
+        async serverWillStart() {
+          return {
+            async drainServer() {
+              console.info('Closing subscription server...')
+              subscriptionServer.close()
+            }
+          }
+        }
+      }
+    ],
   });
+
+  const subscriptionServer = SubscriptionServer.create({
+    schema: rootSchema,
+    execute,
+    subscribe,
+  }, {
+    server: httpServer,
+    path: server.graphqlPath,
+  })
 
   await server.start();
 

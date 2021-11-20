@@ -7,6 +7,7 @@ import {createSession} from "../session/mutations/createSession";
 import {User} from "../user/model";
 import {getUserById} from "../user/resolvers";
 import {authGuard} from "../session/authGuard";
+import {messages} from "../message/subscriptions/messages";
 
 export const rootSchema = new GraphQLSchema({
   query: new GraphQLObjectType({
@@ -43,6 +44,12 @@ export const rootSchema = new GraphQLSchema({
       createMessage,
       createUser,
       createSession,
+    }
+  }),
+  subscription: new GraphQLObjectType({
+    name: 'RootSubscription',
+    fields: {
+      messages,
     }
   })
 })
