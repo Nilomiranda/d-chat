@@ -1,13 +1,10 @@
-import {GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLSchema, GraphQLString} from "graphql";
-import {Message} from "../message/model";
-import {listMessages} from "../message/resolvers";
+import { GraphQLObjectType, GraphQLSchema, GraphQLString} from "graphql";
 import {createMessage} from "../message/mutations/createMessageMutation";
 import {createUser} from "../user/mutations/createUser";
 import {createSession} from "../session/mutations/createSession";
-import {User} from "../user/model";
-import {getUserById} from "../user/resolvers";
-import {authGuard} from "../session/authGuard";
 import {messages} from "../message/subscriptions/messages";
+import { userQuery } from "../user/queries/user";
+import { messagesQuery } from "../message/queries/message";
 
 export const rootSchema = new GraphQLSchema({
   query: new GraphQLObjectType({
@@ -19,23 +16,8 @@ export const rootSchema = new GraphQLSchema({
           return 'API Online!'
         }
       },
-      messages: {
-        type: new GraphQLList(Message),
-        async resolve(parent, args, context) {
-          return (await authGuard(listMessages, context))(context)
-        }
-      },
-      user: {
-        type: User,
-        args: {
-          id: {
-            type: GraphQLNonNull(GraphQLString),
-          },
-        },
-        async resolve(parent, { id } , context) {
-          return (await authGuard(getUserById, context))(context, id)
-        }
-      }
+      messages: messagesQuery,
+      user: userQuery,
     },
   }),
   mutation: new GraphQLObjectType({
