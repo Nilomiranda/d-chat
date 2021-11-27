@@ -8,7 +8,7 @@ interface DecodedJWTToken {
   exp: number
 }
 
-export const authGuard = async (guardedFunction: (...params) => void | Promise<any>, context: ApplicationContext) => {
+export const authGuard = async (guardedFunction: (...params) => void | Promise<any> | any, context: ApplicationContext) => {
   const { user } = context
 
   if (!user) {
