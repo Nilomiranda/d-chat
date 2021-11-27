@@ -5,6 +5,7 @@ import {createSession} from "../session/mutations/createSession";
 import {messages} from "../message/subscriptions/messages";
 import { userQuery } from "../user/queries/user";
 import { messagesQuery } from "../message/queries/message";
+import { sessionQuery } from "../session/queries/session";
 
 export const rootSchema = new GraphQLSchema({
   query: new GraphQLObjectType({
@@ -18,6 +19,7 @@ export const rootSchema = new GraphQLSchema({
       },
       messages: messagesQuery,
       user: userQuery,
+      session: sessionQuery
     },
   }),
   mutation: new GraphQLObjectType({
