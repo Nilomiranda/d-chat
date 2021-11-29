@@ -8,16 +8,38 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import { useMutation, useQuery } from '@apollo/client';
+import { CREATE_SESSION } from '../mutation/CreateSession';
+import { useHistory } from 'react-router';
+import { useToast } from '../../providers/SnackbarProvider';
 
 export const LoginPage = () => {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const [signIn, { loading: signingIn }] = useMutation(CREATE_SESSION)
+  const history = useHistory()
+  const toast = useToast()
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    // eslint-disable-next-line no-console
-    console.log({
+
+    const payload = {
       email: data.get('email'),
       password: data.get('password'),
-    });
+    }
+
+    try {
+      await signIn({
+        variables: payload
+      })
+
+      history.push('/home')
+    } catch (err) {
+      toast.show({
+        kind: 'error',
+        message: 'Error signing in. Are your credentials correct?'
+      })
+      console.error(err)
+    }
   };
 
   return (
@@ -63,6 +85,7 @@ export const LoginPage = () => {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              loading={signingIn}
             >
               Sign In
             </LoadingButton>
