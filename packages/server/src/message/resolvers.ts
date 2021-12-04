@@ -1,6 +1,6 @@
+import { pubsub } from "..";
 import {ApplicationContext} from "../globalInterfaces";
 import {CreateMessageInput} from "./mutations/createMessageMutation";
-import {PubSub} from "graphql-subscriptions";
 
 export const listMessages = (context: ApplicationContext) => {
   const { prisma } = context
@@ -12,8 +12,6 @@ export const listMessages = (context: ApplicationContext) => {
 }
 
 export const createNewMessage = async (context: ApplicationContext, input: CreateMessageInput) => {
-  const pubsub = new PubSub();
-
   const { prisma, user } = context
   const { content } = input
 
@@ -32,9 +30,7 @@ export const createNewMessage = async (context: ApplicationContext, input: Creat
 
   if (createdMessage) {
     pubsub.publish('MESSAGE_CREATED', {
-      createMessage: createdMessage
-    }).then(res => {
-      console.log('published', res)
+      messageCreated: createdMessage
     })
   }
 
