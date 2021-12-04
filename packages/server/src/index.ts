@@ -9,8 +9,11 @@ import {rootSchema} from "./graphql/rootQuery";
 import {decodeTokenAndGetUser} from "./session/authGuard";
 import { execute, subscribe } from 'graphql';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
+import {PubSub} from "graphql-subscriptions";
 
 const prisma = new PrismaClient()
+
+export const pubsub = new PubSub();
 
 async function startApolloServer() {
   dotenv.config()
@@ -24,6 +27,22 @@ async function startApolloServer() {
   const app = new Koa();
 
   const httpServer = http.createServer();
+
+  const subscriptionServer = SubscriptionServer.create({
+    schema: rootSchema,
+    execute,
+    subscribe,
+    onConnect() {
+      console.log('socket server connected 🔥')
+    },
+    onDisconnect() {
+      console.log('socket server disconnected 😥')
+    }
+  }, {
+    server: httpServer,
+    path: '/graphql',
+  })
+
   const server = new ApolloServer({
     schema: rootSchema,
     context: async ({ ctx }) => {
@@ -47,15 +66,6 @@ async function startApolloServer() {
     ],
   });
 
-  const subscriptionServer = SubscriptionServer.create({
-    schema: rootSchema,
-    execute,
-    subscribe,
-  }, {
-    server: httpServer,
-    path: server.graphqlPath,
-  })
-
   await server.start();
 
   app.use(bodyParser())
@@ -64,7 +74,7 @@ async function startApolloServer() {
     app,
     cors: {
       origin: (ctx) => {
-        const validDomains = ['http://localhost:4000'];
+        const validDomains = ['http://localhost:4000', 'https://studio.apollographql.com'];
         if (validDomains.indexOf(ctx.request.header.origin) !== -1) {
           return ctx.request.header.origin;
         }
@@ -72,7 +82,7 @@ async function startApolloServer() {
       },
       allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH,OPTIONS',
       credentials: true,
-    }
+    },
   });
 
   httpServer.on('request', app.callback());
