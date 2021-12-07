@@ -20,15 +20,17 @@ const Routes = () => {
 
 
   if (sessionError || (!loadingSession && !session && !unauthenticatedPathNames.includes(pathname))) {
-    toast.show({
-      kind: 'error',
-      message: 'You must log in first',
-    })
+    !pathname.includes('/login') && console.log('will redirect to login')
+    !pathname.includes('/login') && history.push('/login')
 
-    history.push('/login')
+    // toast.show({
+    //   kind: 'error',
+    //   message: 'You must log in first',
+    // })
   }
 
   if (!loadingSession && session && unauthenticatedPathNames.includes(pathname)) {
+    console.log('will redirect to home')
     history.push('/home')
   }
 
