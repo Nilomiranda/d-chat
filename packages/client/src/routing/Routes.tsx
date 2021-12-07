@@ -4,13 +4,11 @@ import { LoginPage } from '../auth/pages/LoginPage'
 import { RegisterPage } from '../auth/pages/RegisterPage'
 import { GET_SESSION } from '../auth/queries/Session'
 import { HomePage } from '../home/pages/HomePage'
-import { useToast } from '../providers/SnackbarProvider'
 
 const unauthenticatedPathNames = ['/login', '/register']
 
 const Routes = () => {
   const history = useHistory()
-  const toast = useToast()
 
   const { data, loading: loadingSession, error: sessionError } = useQuery(GET_SESSION)
 
@@ -23,10 +21,6 @@ const Routes = () => {
     !pathname.includes('/login') && console.log('will redirect to login')
     !pathname.includes('/login') && history.push('/login')
 
-    // toast.show({
-    //   kind: 'error',
-    //   message: 'You must log in first',
-    // })
   }
 
   if (!loadingSession && session && unauthenticatedPathNames.includes(pathname)) {
