@@ -17,7 +17,7 @@ const Routes = () => {
   const { location: { pathname } } = history
 
 
-  if (sessionError || (!loadingSession && !session && !unauthenticatedPathNames.includes(pathname))) {
+  if ((sessionError || (!loadingSession && !session)) && !unauthenticatedPathNames.includes(pathname)) {
     !pathname.includes('/login') && console.log('will redirect to login')
     !pathname.includes('/login') && history.push('/login')
 
