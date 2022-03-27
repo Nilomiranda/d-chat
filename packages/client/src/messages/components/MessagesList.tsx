@@ -29,7 +29,7 @@ export const MessagesList = () => {
     if (loadingMessages) return <h1>Loading messages</h1>
 
     return (
-      <Box sx={{ width: '100%', maxWidth: '400px', margin: '0 auto' }}>
+      <Box sx={{ width: '100%', height: '100vh', maxWidth: '400px', margin: '0 auto' }}>
         {messages?.map(message => (<MessageCard message={message} key={message.id} />))}
       </Box>
   )
