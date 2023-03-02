@@ -10,7 +10,7 @@ export class AuthController {
    * TODO: CreateUserInput class must be initiated to be validated
    * with the class's decorators
    */
-  @Post()
+  @Post('signup')
   async signUp(@Body() userData: CreateUserInput) {
     return this.service.signUp(userData);
   }
