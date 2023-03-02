@@ -4,6 +4,9 @@ import { CreateUserInput } from './input/createUser';
 import { PrismaService } from '../prisma.service';
 import { SafeUser } from '../user/user';
 import { CreateSessionInput } from './input/createSession';
+import { Response } from 'express';
+import { User } from '@prisma/client';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class AuthService {
@@ -19,7 +22,7 @@ export class AuthService {
     );
   }
 
-  async signIn(signInData: CreateSessionInput) {
+  async signIn(signInData: CreateSessionInput, response: Response) {
     const { email, password } = signInData;
 
     const user = await this.prisma.user.findFirst({
@@ -35,6 +38,13 @@ export class AuthService {
     if (!(await bcrypt.compare(password, user.password))) {
       throw new NotFoundException('User not found.');
     }
+
+    response.cookie(
+      'auth_token',
+      jwt.sign({ userId: user.id }, process.env.TOKEN_SECRET, {
+        expiresIn: '7d',
+      }),
+    );
 
     return new SafeUser(user);
   }
